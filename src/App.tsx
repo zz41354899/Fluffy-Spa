@@ -291,20 +291,12 @@ const App = () => {
               className="flex flex-wrap items-center justify-center gap-4 pt-4"
               variants={containerVariants}
             >
-              <motion.div 
-                variants={scaleInVariants}
-                whileHover={{ scale: 1.05, y: -2 }} 
-                whileTap={{ scale: 0.95 }}
-              >
+              <div>
                 <Button size="lg" onClick={() => scrollToSection('booking')}>
                   立即預約
                 </Button>
-              </motion.div>
-              <motion.div 
-                variants={scaleInVariants}
-                whileHover={{ scale: 1.05, y: -2 }} 
-                whileTap={{ scale: 0.95 }}
-              >
+              </div>
+              <div>
                 <Button
                   size="lg"
                   variant="outline"
@@ -312,7 +304,7 @@ const App = () => {
                 >
                   查看服務
                 </Button>
-              </motion.div>
+              </div>
             </motion.div>
           </motion.div>
 
@@ -323,30 +315,24 @@ const App = () => {
             viewport={{ once: true, amount: 0.2 }}
             variants={containerVariants}
           >
-            <motion.div 
+            <div 
               className="text-center"
-              variants={scaleInVariants}
-              whileHover={{ scale: 1.05, y: -5 }}
             >
               <p className="text-3xl font-bold text-slate-900">500+</p>
               <p className="text-sm text-slate-600 mt-2">滿意客戶</p>
-            </motion.div>
-            <motion.div 
+            </div>
+            <div 
               className="text-center"
-              variants={scaleInVariants}
-              whileHover={{ scale: 1.05, y: -5 }}
             >
               <p className="text-3xl font-bold text-slate-900">4.9</p>
               <p className="text-sm text-slate-600 mt-2">Google 評價</p>
-            </motion.div>
-            <motion.div 
+            </div>
+            <div 
               className="text-center"
-              variants={scaleInVariants}
-              whileHover={{ scale: 1.05, y: -5 }}
             >
               <p className="text-3xl font-bold text-slate-900">100%</p>
               <p className="text-sm text-slate-600 mt-2">寵物安全產品</p>
-            </motion.div>
+            </div>
           </motion.div>
         </motion.section>
 
@@ -381,8 +367,7 @@ const App = () => {
             <motion.div 
               className="space-y-3"
               variants={slideInLeftVariants}
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
+                          >
               <h3 className="text-lg font-semibold text-slate-900">認證美容師</h3>
               <p className="text-sm text-slate-600">
                 具備專業證照與實務經驗，定期進修最新知識，遵守低壓力處理原則。
@@ -391,8 +376,7 @@ const App = () => {
             <motion.div 
               className="space-y-3"
               variants={fadeInUpVariants}
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
+                          >
               <h3 className="text-lg font-semibold text-slate-900">安全產品</h3>
               <p className="text-sm text-slate-600">
                 全程使用寵物專用產品，無矽靈、無刺激性，針對敏感膚質調整。
@@ -401,8 +385,7 @@ const App = () => {
             <motion.div 
               className="space-y-3"
               variants={slideInRightVariants}
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
+                          >
               <h3 className="text-lg font-semibold text-slate-900">清潔環境</h3>
               <p className="text-sm text-slate-600">
                 獨立分區設計，定時消毒，降低聲音與氣味壓力，讓毛孩放心等待。
@@ -442,8 +425,7 @@ const App = () => {
             <motion.div 
               className="space-y-4 rounded-lg border border-slate-200 p-6"
               variants={scaleInVariants}
-              whileHover={{ scale: 1.03, y: -5 }}
-            >
+                          >
               <h3 className="text-lg font-semibold text-slate-900">小型犬基礎 Spa</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 900</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -456,8 +438,7 @@ const App = () => {
             <motion.div 
               className="space-y-4 rounded-lg border border-slate-200 p-6"
               variants={scaleInVariants}
-              whileHover={{ scale: 1.03, y: -5 }}
-            >
+                          >
               <h3 className="text-lg font-semibold text-slate-900">貓咪舒壓美容</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 1,200</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -470,8 +451,7 @@ const App = () => {
             <motion.div 
               className="space-y-4 rounded-lg border border-slate-200 p-6"
               variants={scaleInVariants}
-              whileHover={{ scale: 1.03, y: -5 }}
-            >
+                          >
               <h3 className="text-lg font-semibold text-slate-900">全方位造型設計</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 1,800</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -533,15 +513,12 @@ const App = () => {
                 key={step.title}
                 className="space-y-3 text-center"
                 variants={scaleInVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
-              >
-                <motion.div 
+                              >
+                <div 
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white"
-                  whileHover={{ scale: 1.1, rotate: 360 }}
-                  transition={{ duration: 0.5 }}
                 >
                   {index + 1}
-                </motion.div>
+                </div>
                 <h3 className="font-semibold text-slate-900">{step.title}</h3>
                 <p className="text-sm text-slate-600">{step.description}</p>
               </motion.div>
@@ -594,8 +571,7 @@ const App = () => {
                 key={item.name} 
                 className="space-y-3 rounded-lg border border-slate-200 p-6"
                 variants={scaleInVariants}
-                whileHover={{ scale: 1.02, y: -3 }}
-              >
+                              >
                 <p className="font-semibold text-slate-900">{item.name}</p>
                 <p className="text-sm text-slate-600">{item.content}</p>
               </motion.div>
@@ -813,11 +789,11 @@ const App = () => {
                         </FormItem>
                       )}
                     />
-                    <motion.div className="md:col-span-2" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <div className="md:col-span-2">
                       <Button type="submit" className="w-full" size="lg">
                         送出預約
                       </Button>
-                    </motion.div>
+                    </div>
                   </form>
                 </Form>
               </CardContent>
