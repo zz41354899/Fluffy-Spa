@@ -688,7 +688,7 @@ const App = () => {
             variants={scaleInVariants}
           >
             <Card>
-              <CardContent>
+              <CardContent className="p-6">
                 <Form {...form}>
                   <form
                     className="grid gap-4 md:grid-cols-2"
