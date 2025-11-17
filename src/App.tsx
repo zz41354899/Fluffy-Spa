@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { motion } from 'framer-motion'
 import { Button } from './components/ui/button'
 import {
   Accordion,
@@ -34,10 +35,92 @@ import { Textarea } from './components/ui/textarea'
 const scrollToSection = (id: string) => {
   const el = document.getElementById(id)
   if (!el) return
-  window.scrollTo({
-    top: el.offsetTop - 80,
+  el.scrollIntoView({
     behavior: 'smooth',
+    block: 'start',
+    inline: 'nearest'
   })
+}
+
+// Framer 風格滾動動畫變數
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      duration: 0.6
+    }
+  }
+}
+
+
+const fadeInUpVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 80,
+    filter: "blur(4px)"
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 1,
+      ease: [0.16, 1, 0.3, 1] as const
+    }
+  }
+}
+
+const scaleInVariants = {
+  hidden: { 
+    scale: 0.8, 
+    opacity: 0,
+    y: 30
+  },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1] as const
+    }
+  }
+}
+
+const slideInLeftVariants = {
+  hidden: { 
+    opacity: 0, 
+    x: -100,
+    filter: "blur(2px)"
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const
+    }
+  }
+}
+
+const slideInRightVariants = {
+  hidden: { 
+    opacity: 0, 
+    x: 100,
+    filter: "blur(2px)"
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const
+    }
+  }
 }
 
 const bookingSchema = z.object({
@@ -80,8 +163,18 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+    <motion.div 
+      className="min-h-screen bg-white text-slate-900"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.header 
+        className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:px-8">
           <button
             type="button"
@@ -166,94 +259,191 @@ const App = () => {
             </nav>
           </div>
         )}
-      </header>
+      </motion.header>
 
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-4 md:px-6 md:pt-10 lg:px-8">
         {/* Hero */}
-        <section className="space-y-8 py-16 md:py-24" id="hero">
-          <div className="space-y-6 text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
+        <motion.section 
+          className="space-y-8 py-16 md:py-24" 
+          id="hero"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-6 text-center"
+            variants={containerVariants}
+          >
+            <motion.h1 
+              className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl"
+              variants={fadeInUpVariants}
+            >
               溫柔美容，讓毛孩每天都開心
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
+            </motion.h1>
+            <motion.p 
+              className="mx-auto max-w-2xl text-lg text-slate-600"
+              variants={fadeInUpVariants}
+            >
               專業寵物美容團隊，使用寵物專用安全產品，針對每隻毛孩客製化美容流程。
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <Button size="lg" onClick={() => scrollToSection('booking')}>
-                立即預約
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => scrollToSection('services')}
+            </motion.p>
+            <motion.div 
+              className="flex flex-wrap items-center justify-center gap-4 pt-4"
+              variants={containerVariants}
+            >
+              <motion.div 
+                variants={scaleInVariants}
+                whileHover={{ scale: 1.05, y: -2 }} 
+                whileTap={{ scale: 0.95 }}
               >
-                查看服務
-              </Button>
-            </div>
-          </div>
+                <Button size="lg" onClick={() => scrollToSection('booking')}>
+                  立即預約
+                </Button>
+              </motion.div>
+              <motion.div 
+                variants={scaleInVariants}
+                whileHover={{ scale: 1.05, y: -2 }} 
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => scrollToSection('services')}
+                >
+                  查看服務
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-3 pt-8">
-            <div className="text-center">
+          <motion.div 
+            className="grid gap-8 md:grid-cols-3 pt-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={containerVariants}
+          >
+            <motion.div 
+              className="text-center"
+              variants={scaleInVariants}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
               <p className="text-3xl font-bold text-slate-900">500+</p>
-              <p className="text-sm text-slate-600 mt-2">隻毛孩已服務</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-slate-900">4.9 ★</p>
+              <p className="text-sm text-slate-600 mt-2">滿意客戶</p>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              variants={scaleInVariants}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <p className="text-3xl font-bold text-slate-900">4.9</p>
               <p className="text-sm text-slate-600 mt-2">Google 評價</p>
-            </div>
-            <div className="text-center">
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              variants={scaleInVariants}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
               <p className="text-3xl font-bold text-slate-900">100%</p>
               <p className="text-sm text-slate-600 mt-2">寵物安全產品</p>
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
         {/* About / Why choose us */}
-        <section className="space-y-12 py-20 border-t border-slate-200" id="about">
-          <div className="space-y-3 text-center">
+        <motion.section 
+          className="space-y-12 py-20 border-t border-slate-200" 
+          id="about"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-3 text-center"
+            variants={fadeInUpVariants}
+          >
             <h2 className="text-3xl font-bold text-slate-900">
               為什麼選擇我們
             </h2>
             <p className="mx-auto max-w-2xl text-slate-600">
               我們相信毛孩是家人，從環境、用品到流程，都以「減壓、安全、舒服」為第一優先。
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="space-y-3">
+          <motion.div 
+            className="grid gap-8 md:grid-cols-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={containerVariants}
+          >
+            <motion.div 
+              className="space-y-3"
+              variants={slideInLeftVariants}
+              whileHover={{ scale: 1.02, y: -5 }}
+            >
               <h3 className="text-lg font-semibold text-slate-900">認證美容師</h3>
               <p className="text-sm text-slate-600">
                 具備專業證照與實務經驗，定期進修最新知識，遵守低壓力處理原則。
               </p>
-            </div>
-            <div className="space-y-3">
+            </motion.div>
+            <motion.div 
+              className="space-y-3"
+              variants={fadeInUpVariants}
+              whileHover={{ scale: 1.02, y: -5 }}
+            >
               <h3 className="text-lg font-semibold text-slate-900">安全產品</h3>
               <p className="text-sm text-slate-600">
                 全程使用寵物專用產品，無矽靈、無刺激性，針對敏感膚質調整。
               </p>
-            </div>
-            <div className="space-y-3">
+            </motion.div>
+            <motion.div 
+              className="space-y-3"
+              variants={slideInRightVariants}
+              whileHover={{ scale: 1.02, y: -5 }}
+            >
               <h3 className="text-lg font-semibold text-slate-900">清潔環境</h3>
               <p className="text-sm text-slate-600">
                 獨立分區設計，定時消毒，降低聲音與氣味壓力，讓毛孩放心等待。
               </p>
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
         {/* Services */}
-        <section className="space-y-12 py-20" id="services">
-          <div className="space-y-3 text-center">
+        <motion.section 
+          className="space-y-12 py-20" 
+          id="services"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-3 text-center"
+            variants={fadeInUpVariants}
+          >
             <h2 className="text-3xl font-bold text-slate-900">
               服務項目
             </h2>
             <p className="mx-auto max-w-2xl text-slate-600">
               依照毛孩體型與需求客製化的美容服務
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="space-y-4 rounded-lg border border-slate-200 p-6">
+          <motion.div 
+            className="grid gap-6 md:grid-cols-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={containerVariants}
+          >
+            <motion.div 
+              className="space-y-4 rounded-lg border border-slate-200 p-6"
+              variants={scaleInVariants}
+              whileHover={{ scale: 1.03, y: -5 }}
+            >
               <h3 className="text-lg font-semibold text-slate-900">小型犬基礎 Spa</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 900</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -261,9 +451,13 @@ const App = () => {
                 <li>・指甲修剪、清耳、剃腳底毛</li>
                 <li>・簡易造型修剪</li>
               </ul>
-            </div>
+            </motion.div>
 
-            <div className="space-y-4 rounded-lg border border-slate-200 p-6">
+            <motion.div 
+              className="space-y-4 rounded-lg border border-slate-200 p-6"
+              variants={scaleInVariants}
+              whileHover={{ scale: 1.03, y: -5 }}
+            >
               <h3 className="text-lg font-semibold text-slate-900">貓咪舒壓美容</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 1,200</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -271,9 +465,13 @@ const App = () => {
                 <li>・專用貓咪吹水與柔軟毛巾</li>
                 <li>・去毛結與基礎修剪</li>
               </ul>
-            </div>
+            </motion.div>
 
-            <div className="space-y-4 rounded-lg border border-slate-200 p-6">
+            <motion.div 
+              className="space-y-4 rounded-lg border border-slate-200 p-6"
+              variants={scaleInVariants}
+              whileHover={{ scale: 1.03, y: -5 }}
+            >
               <h3 className="text-lg font-semibold text-slate-900">全方位造型設計</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 1,800</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -281,21 +479,38 @@ const App = () => {
                 <li>・全程說明與造型溝通</li>
                 <li>・可加購保養／護毛課程</li>
               </ul>
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
         {/* Process */}
-        <section className="space-y-12 py-20 border-t border-slate-200" id="process">
-          <div className="space-y-3 text-center">
+        <motion.section 
+          className="space-y-12 py-20 border-t border-slate-200" 
+          id="process"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-3 text-center"
+            variants={fadeInUpVariants}
+          >
             <h2 className="text-3xl font-bold text-slate-900">
               美容流程
             </h2>
             <p className="mx-auto max-w-2xl text-slate-600">
-              四個簡單步驟，完成一次安心的美容體驗
+              每個步驟都經過精心設計，確保毛孩在整個過程中感到安心與舒適。
             </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-4">
+          </motion.div>
+
+          <motion.div 
+            className="grid gap-6 md:grid-cols-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={containerVariants}
+          >
             {[
               {
                 title: '線上預約',
@@ -314,28 +529,50 @@ const App = () => {
                 description: '確認造型與狀況，給予居家照顧建議。',
               },
             ].map((step, index) => (
-              <div
+              <motion.div
                 key={step.title}
                 className="space-y-3 text-center"
+                variants={scaleInVariants}
+                whileHover={{ scale: 1.05, y: -5 }}
               >
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
+                <motion.div 
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white"
+                  whileHover={{ scale: 1.1, rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                >
                   {index + 1}
-                </div>
+                </motion.div>
                 <h3 className="font-semibold text-slate-900">{step.title}</h3>
                 <p className="text-sm text-slate-600">{step.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Testimonials */}
-        <section className="space-y-12 py-20" id="testimonials">
-          <div className="space-y-3 text-center">
+        <motion.section 
+          className="space-y-12 py-20" 
+          id="testimonials"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-3 text-center"
+            variants={fadeInUpVariants}
+          >
             <h2 className="text-3xl font-bold text-slate-900">
               客戶評價
             </h2>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          </motion.div>
+          <motion.div 
+            className="grid gap-6 md:grid-cols-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={containerVariants}
+          >
             {[
               {
                 name: '球球・柯基',
@@ -353,30 +590,51 @@ const App = () => {
                   '貓咪本身很緊張，但美容師動作很溫柔，回家後毛很蓬鬆也沒有打結。',
               },
             ].map((item) => (
-              <div key={item.name} className="space-y-3 rounded-lg border border-slate-200 p-6">
+              <motion.div 
+                key={item.name} 
+                className="space-y-3 rounded-lg border border-slate-200 p-6"
+                variants={scaleInVariants}
+                whileHover={{ scale: 1.02, y: -3 }}
+              >
                 <p className="font-semibold text-slate-900">{item.name}</p>
                 <p className="text-sm text-slate-600">{item.content}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* FAQ 使用 Accordion */}
-        <section className="space-y-8 py-20 border-t border-slate-200" id="faq">
-          <div className="space-y-3 text-center">
+        <motion.section 
+          className="space-y-8 py-20 border-t border-slate-200" 
+          id="faq"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-3 text-center"
+            variants={fadeInUpVariants}
+          >
             <h2 className="text-3xl font-bold text-slate-900">
               常見問題
             </h2>
-          </div>
-          <Accordion type="single" collapsible className="mx-auto max-w-2xl">
-            <AccordionItem value="before-visit">
-              <AccordionTrigger>
-                帶毛孩來之前需要做什麼準備？
-              </AccordionTrigger>
-              <AccordionContent>
-                建議先讓毛孩上廁所，並準備平常使用的牽繩或外出籠。若毛孩有特殊狀況，請提前告知美容師。
-              </AccordionContent>
-            </AccordionItem>
+          </motion.div>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUpVariants}
+          >
+            <Accordion type="single" collapsible className="mx-auto max-w-2xl">
+              <AccordionItem value="before-visit">
+                <AccordionTrigger>
+                  帶毛孩來之前需要做什麼準備？
+                </AccordionTrigger>
+                <AccordionContent>
+                  建議先讓毛孩上廁所，並準備平常使用的牽繩或外出籠。若毛孩有特殊狀況，請提前告知美容師。
+                </AccordionContent>
+              </AccordionItem>
             <AccordionItem value="time">
               <AccordionTrigger>
                 一次美容大概要花多久時間？
@@ -402,19 +660,33 @@ const App = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Booking / contact */}
-        <section className="space-y-8 py-20 border-t border-slate-200" id="booking">
-          <div className="space-y-3 text-center">
+        <motion.section 
+          className="space-y-8 py-20 border-t border-slate-200" 
+          id="booking"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUpVariants}
+        >
+          <motion.div 
+            className="space-y-3 text-center"
+            variants={fadeInUpVariants}
+          >
             <h2 className="text-3xl font-bold text-slate-900">
               線上預約
             </h2>
             <p className="mx-auto max-w-2xl text-slate-600">
               填寫以下表單，我們會在營業時間內與你聯繫確認預約。
             </p>
-          </div>
-          <div className="mx-auto max-w-2xl">
+          </motion.div>
+          <motion.div 
+            className="mx-auto max-w-2xl"
+            variants={scaleInVariants}
+          >
             <Card>
               <CardContent>
                 <Form {...form}>
@@ -541,51 +813,74 @@ const App = () => {
                         </FormItem>
                       )}
                     />
-                    <div className="md:col-span-2">
+                    <motion.div className="md:col-span-2" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button type="submit" className="w-full" size="lg">
                         送出預約
                       </Button>
-                    </div>
+                    </motion.div>
                   </form>
                 </Form>
               </CardContent>
             </Card>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </main>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">🐾</span>
-                <span className="font-semibold text-slate-900">Fluffy Spa</span>
-              </div>
-              <p className="text-sm text-slate-600">
-                專業寵物美容，溫柔呵護每一隻毛孩。
-              </p>
+      <motion.footer className="border-t border-slate-200 bg-white">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+            <div className="grid gap-8 md:grid-cols-3">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-2xl">🐾</span>
+                  <span className="font-semibold text-slate-900">Fluffy Spa</span>
+                </div>
+                <p className="text-sm text-slate-600">
+                  專業寵物美容，溫柔呵護每一隻毛孩。
+                </p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <h3 className="font-semibold text-slate-900 mb-3">聯絡方式</h3>
+                <p className="text-sm text-slate-600 space-y-1">
+                  <div>台北市信義區某某路 88 號 1 樓</div>
+                  <div>電話：02-1234-5678</div>
+                  <div>週二至週日 11:00–20:00</div>
+                </p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                <div className="text-right">
+                  <a href="#hero" className="text-sm text-slate-600 hover:text-slate-900">
+                    回到頂部
+                  </a>
+                  <p className="text-xs text-slate-500 mt-4">
+                    {new Date().getFullYear()} Fluffy Spa
+                  </p>
+                </div>
+              </motion.div>
             </div>
-            <div>
-              <h3 className="font-semibold text-slate-900 mb-3">聯絡方式</h3>
-              <p className="text-sm text-slate-600 space-y-1">
-                <div>台北市信義區某某路 88 號 1 樓</div>
-                <div>電話：02-1234-5678</div>
-                <div>週二至週日 11:00–20:00</div>
-              </p>
-            </div>
-            <div className="text-right">
-              <a href="#hero" className="text-sm text-slate-600 hover:text-slate-900">
-                回到頂部
-              </a>
-              <p className="text-xs text-slate-500 mt-4">
-                © {new Date().getFullYear()} Fluffy Spa
-              </p>
-            </div>
+            <p className="text-xs text-slate-500 mt-4">
+              &copy; {new Date().getFullYear()} Fluffy Spa
+            </p>
           </div>
-        </div>
-      </footer>
-    </div>
+        </motion.div>
+      </motion.footer>
+    </motion.div>
   )
 }
 
