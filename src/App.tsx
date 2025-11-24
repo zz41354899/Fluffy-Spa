@@ -23,6 +23,8 @@ import {
   FormMessage,
 } from './components/ui/form'
 import { Input } from './components/ui/input'
+import { Toaster } from './components/ui/sonner'
+import { toast } from 'sonner'
 import {
   Select,
   SelectContent,
@@ -31,6 +33,7 @@ import {
   SelectValue,
 } from './components/ui/select'
 import { Textarea } from './components/ui/textarea'
+import { supabase } from './lib/supabaseClient'
 
 const scrollToSection = (id: string) => {
   const el = document.getElementById(id)
@@ -56,8 +59,8 @@ const containerVariants = {
 
 
 const fadeInUpVariants = {
-  hidden: { 
-    opacity: 0, 
+  hidden: {
+    opacity: 0,
     y: 80,
     filter: "blur(4px)"
   },
@@ -73,8 +76,8 @@ const fadeInUpVariants = {
 }
 
 const scaleInVariants = {
-  hidden: { 
-    scale: 0.8, 
+  hidden: {
+    scale: 0.8,
     opacity: 0,
     y: 30
   },
@@ -90,8 +93,8 @@ const scaleInVariants = {
 }
 
 const slideInLeftVariants = {
-  hidden: { 
-    opacity: 0, 
+  hidden: {
+    opacity: 0,
     x: -100,
     filter: "blur(2px)"
   },
@@ -107,8 +110,8 @@ const slideInLeftVariants = {
 }
 
 const slideInRightVariants = {
-  hidden: { 
-    opacity: 0, 
+  hidden: {
+    opacity: 0,
     x: 100,
     filter: "blur(2px)"
   },
@@ -150,11 +153,30 @@ const App = () => {
     },
   })
 
-  const handleSubmit = (values: BookingFormValues) => {
-    // 簡單示意：實際可改成整合後端或外部服務
-    // eslint-disable-next-line no-alert
-    alert(`已收到預約需求，感謝 ${values.name || '客人'}！`)
-    form.reset()
+  const handleSubmit = async (values: BookingFormValues) => {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .insert([
+          {
+            name: values.name,
+            phone: values.phone,
+            email: values.email || null,
+            pet_type: values.petType,
+            service_type: values.serviceType,
+            preferred_date: values.date || null,
+            notes: values.notes || null,
+          },
+        ])
+
+      if (error) throw error
+
+      toast.success(`已收到預約需求，感謝 ${values.name || '客人'}！`)
+      form.reset()
+    } catch (error) {
+      console.error('Error submitting booking:', error)
+      toast.error('預約送出失敗，請稍後再試或直接聯繫我們。')
+    }
   }
 
   const handleNavClick = (id: string) => {
@@ -163,13 +185,13 @@ const App = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-screen bg-white text-slate-900"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
-      <motion.header 
+      <motion.header
         className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -260,34 +282,35 @@ const App = () => {
           </div>
         )}
       </motion.header>
+      <Toaster />
 
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-4 md:px-6 md:pt-10 lg:px-8">
         {/* Hero */}
-        <motion.section 
-          className="space-y-8 py-16 md:py-24" 
+        <motion.section
+          className="space-y-8 py-16 md:py-24"
           id="hero"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-6 text-center"
             variants={containerVariants}
           >
-            <motion.h1 
+            <motion.h1
               className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl"
               variants={fadeInUpVariants}
             >
               溫柔美容，讓毛孩每天都開心
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="mx-auto max-w-2xl text-lg text-slate-600"
               variants={fadeInUpVariants}
             >
               專業寵物美容團隊，使用寵物專用安全產品，針對每隻毛孩客製化美容流程。
             </motion.p>
-            <motion.div 
+            <motion.div
               className="flex flex-wrap items-center justify-center gap-4 pt-4"
               variants={containerVariants}
             >
@@ -308,26 +331,26 @@ const App = () => {
             </motion.div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="grid gap-8 md:grid-cols-3 pt-8"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={containerVariants}
           >
-            <div 
+            <div
               className="text-center"
             >
               <p className="text-3xl font-bold text-slate-900">500+</p>
               <p className="text-sm text-slate-600 mt-2">滿意客戶</p>
             </div>
-            <div 
+            <div
               className="text-center"
             >
               <p className="text-3xl font-bold text-slate-900">4.9</p>
               <p className="text-sm text-slate-600 mt-2">Google 評價</p>
             </div>
-            <div 
+            <div
               className="text-center"
             >
               <p className="text-3xl font-bold text-slate-900">100%</p>
@@ -337,15 +360,15 @@ const App = () => {
         </motion.section>
 
         {/* About / Why choose us */}
-        <motion.section 
-          className="space-y-12 py-20 border-t border-slate-200" 
+        <motion.section
+          className="space-y-12 py-20 border-t border-slate-200"
           id="about"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-3 text-center"
             variants={fadeInUpVariants}
           >
@@ -357,35 +380,35 @@ const App = () => {
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="grid gap-8 md:grid-cols-3"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={containerVariants}
           >
-            <motion.div 
+            <motion.div
               className="space-y-3"
               variants={slideInLeftVariants}
-                          >
+            >
               <h3 className="text-lg font-semibold text-slate-900">認證美容師</h3>
               <p className="text-sm text-slate-600">
                 具備專業證照與實務經驗，定期進修最新知識，遵守低壓力處理原則。
               </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               className="space-y-3"
               variants={fadeInUpVariants}
-                          >
+            >
               <h3 className="text-lg font-semibold text-slate-900">安全產品</h3>
               <p className="text-sm text-slate-600">
                 全程使用寵物專用產品，無矽靈、無刺激性，針對敏感膚質調整。
               </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               className="space-y-3"
               variants={slideInRightVariants}
-                          >
+            >
               <h3 className="text-lg font-semibold text-slate-900">清潔環境</h3>
               <p className="text-sm text-slate-600">
                 獨立分區設計，定時消毒，降低聲音與氣味壓力，讓毛孩放心等待。
@@ -395,15 +418,15 @@ const App = () => {
         </motion.section>
 
         {/* Services */}
-        <motion.section 
-          className="space-y-12 py-20" 
+        <motion.section
+          className="space-y-12 py-20"
           id="services"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-3 text-center"
             variants={fadeInUpVariants}
           >
@@ -415,17 +438,17 @@ const App = () => {
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="grid gap-6 md:grid-cols-3"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={containerVariants}
           >
-            <motion.div 
+            <motion.div
               className="space-y-4 rounded-lg border border-slate-200 p-6"
               variants={scaleInVariants}
-                          >
+            >
               <h3 className="text-lg font-semibold text-slate-900">小型犬基礎 Spa</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 900</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -435,10 +458,10 @@ const App = () => {
               </ul>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="space-y-4 rounded-lg border border-slate-200 p-6"
               variants={scaleInVariants}
-                          >
+            >
               <h3 className="text-lg font-semibold text-slate-900">貓咪舒壓美容</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 1,200</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -448,10 +471,10 @@ const App = () => {
               </ul>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="space-y-4 rounded-lg border border-slate-200 p-6"
               variants={scaleInVariants}
-                          >
+            >
               <h3 className="text-lg font-semibold text-slate-900">全方位造型設計</h3>
               <p className="text-2xl font-bold text-slate-900">NT$ 1,800</p>
               <ul className="space-y-2 text-sm text-slate-600">
@@ -464,15 +487,15 @@ const App = () => {
         </motion.section>
 
         {/* Process */}
-        <motion.section 
-          className="space-y-12 py-20 border-t border-slate-200" 
+        <motion.section
+          className="space-y-12 py-20 border-t border-slate-200"
           id="process"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-3 text-center"
             variants={fadeInUpVariants}
           >
@@ -484,7 +507,7 @@ const App = () => {
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="grid gap-6 md:grid-cols-4"
             initial="hidden"
             whileInView="visible"
@@ -513,8 +536,8 @@ const App = () => {
                 key={step.title}
                 className="space-y-3 text-center"
                 variants={scaleInVariants}
-                              >
-                <div 
+              >
+                <div
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white"
                 >
                   {index + 1}
@@ -527,15 +550,15 @@ const App = () => {
         </motion.section>
 
         {/* Testimonials */}
-        <motion.section 
-          className="space-y-12 py-20" 
+        <motion.section
+          className="space-y-12 py-20"
           id="testimonials"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-3 text-center"
             variants={fadeInUpVariants}
           >
@@ -543,7 +566,7 @@ const App = () => {
               客戶評價
             </h2>
           </motion.div>
-          <motion.div 
+          <motion.div
             className="grid gap-6 md:grid-cols-3"
             initial="hidden"
             whileInView="visible"
@@ -567,11 +590,11 @@ const App = () => {
                   '貓咪本身很緊張，但美容師動作很溫柔，回家後毛很蓬鬆也沒有打結。',
               },
             ].map((item) => (
-              <motion.div 
-                key={item.name} 
+              <motion.div
+                key={item.name}
                 className="space-y-3 rounded-lg border border-slate-200 p-6"
                 variants={scaleInVariants}
-                              >
+              >
                 <p className="font-semibold text-slate-900">{item.name}</p>
                 <p className="text-sm text-slate-600">{item.content}</p>
               </motion.div>
@@ -580,15 +603,15 @@ const App = () => {
         </motion.section>
 
         {/* FAQ 使用 Accordion */}
-        <motion.section 
-          className="space-y-8 py-20 border-t border-slate-200" 
+        <motion.section
+          className="space-y-8 py-20 border-t border-slate-200"
           id="faq"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-3 text-center"
             variants={fadeInUpVariants}
           >
@@ -611,44 +634,44 @@ const App = () => {
                   建議先讓毛孩上廁所，並準備平常使用的牽繩或外出籠。若毛孩有特殊狀況，請提前告知美容師。
                 </AccordionContent>
               </AccordionItem>
-            <AccordionItem value="time">
-              <AccordionTrigger>
-                一次美容大概要花多久時間？
-              </AccordionTrigger>
-              <AccordionContent>
-                小型犬基礎美容約 1.5 小時，貓咪或完整造型約 2–3 小時，如有排隊可能會再稍微增加。
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="vaccines">
-              <AccordionTrigger>
-                是否需要完成疫苗或除蟲才可以預約？
-              </AccordionTrigger>
-              <AccordionContent>
-                為了保護其他毛孩與環境安全，我們建議毛孩至少完成基礎疫苗與體外除蟲，如未完成也請事先告知。
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="cancel">
-              <AccordionTrigger>
-                臨時有事想改期或取消該怎麼辦？
-              </AccordionTrigger>
-              <AccordionContent>
-                可以直接透過電話或社群私訊與我們聯繫，若需取消請盡量提前一天告知。
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+              <AccordionItem value="time">
+                <AccordionTrigger>
+                  一次美容大概要花多久時間？
+                </AccordionTrigger>
+                <AccordionContent>
+                  小型犬基礎美容約 1.5 小時，貓咪或完整造型約 2–3 小時，如有排隊可能會再稍微增加。
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="vaccines">
+                <AccordionTrigger>
+                  是否需要完成疫苗或除蟲才可以預約？
+                </AccordionTrigger>
+                <AccordionContent>
+                  為了保護其他毛孩與環境安全，我們建議毛孩至少完成基礎疫苗與體外除蟲，如未完成也請事先告知。
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="cancel">
+                <AccordionTrigger>
+                  臨時有事想改期或取消該怎麼辦？
+                </AccordionTrigger>
+                <AccordionContent>
+                  可以直接透過電話或社群私訊與我們聯繫，若需取消請盡量提前一天告知。
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </motion.div>
         </motion.section>
 
         {/* Booking / contact */}
-        <motion.section 
-          className="space-y-8 py-20 border-t border-slate-200" 
+        <motion.section
+          className="space-y-8 py-20 border-t border-slate-200"
           id="booking"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUpVariants}
         >
-          <motion.div 
+          <motion.div
             className="space-y-3 text-center"
             variants={fadeInUpVariants}
           >
@@ -659,7 +682,7 @@ const App = () => {
               填寫以下表單，我們會在營業時間內與你聯繫確認預約。
             </p>
           </motion.div>
-          <motion.div 
+          <motion.div
             className="mx-auto max-w-2xl"
             variants={scaleInVariants}
           >
